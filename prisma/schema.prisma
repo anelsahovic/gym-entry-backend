@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -20,15 +19,16 @@ model StaffUser {
 }
 
 model Member {
-  id        String   @id @default(uuid())
-  name      String
-  email     String?
-  phone     String?
-  uniqueId  String   @unique // This is like their card ID / bar code
-  startDate DateTime
-  endDate   DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String    @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  dateOfBirth DateTime?
+  uniqueId    String    @unique // This is like their card ID / bar code
+  startDate   DateTime  @default(now())
+  endDate     DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   membershipId String
   membership   Membership @relation(fields: [membershipId], references: [id])
@@ -38,11 +38,11 @@ model Member {
 }
 
 model Membership {
-  id           String         @id @default(uuid())
-  name         MembershipName
+  id           String   @id @default(uuid())
+  name         String
   durationDays Int // Used to calculate endDate
   price        Float
-  createdAt    DateTime       @default(now())
+  createdAt    DateTime @default(now())
 
   members Member[]
 }
@@ -50,11 +50,4 @@ model Membership {
 enum Role {
   ADMIN
   STAFF
-}
-
-enum MembershipName {
-  Daily
-  Monthly
-  HalfYearly
-  Yearly
 }
