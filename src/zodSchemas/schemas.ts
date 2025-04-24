@@ -41,3 +41,20 @@ export const UpdateMembershipSchema = z.object({
 });
 
 export type UpdateMembershipBody = z.infer<typeof UpdateMembershipSchema>;
+
+export const CreateUserSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email(),
+  password: z.string(),
+  role: z.enum(['STAFF', 'ADMIN']),
+});
+
+export type CreateUserBody = z.infer<typeof CreateUserSchema>;
+
+export const UpdateUserSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email(),
+  role: z.enum(['STAFF', 'ADMIN']),
+});
+
+export type UpdateUserBody = z.infer<typeof UpdateUserSchema>;

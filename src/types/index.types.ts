@@ -33,3 +33,24 @@ export interface UpdateMembershipParams {
 export interface DeleteMembershipParams {
   membershipId: string;
 }
+
+export interface ShowUserParams {
+  userId: string;
+}
+
+export interface UpdateUserParams {
+  userId: string;
+}
+
+export interface DeleteUserParams {
+  userId: string;
+}
+
+export interface UpdateUserPasswordParams {
+  userId: string;
+}
+
+export interface UpdateUserPasswordBody {
+  oldPassword: string;
+  newPassword: string;
+}

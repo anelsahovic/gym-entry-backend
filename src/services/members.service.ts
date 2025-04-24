@@ -30,7 +30,7 @@ export async function createMember(memberData: CreateMemberBody) {
 
   if (!membership) throw createHttpError(404, "Membership doesn't exist.");
 
-  const staffExists = await prisma.staffUser.findUnique({
+  const staffExists = await prisma.user.findUnique({
     where: {
       id: memberData.staffId,
     },
