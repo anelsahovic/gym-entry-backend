@@ -45,7 +45,7 @@ export type UpdateMembershipBody = z.infer<typeof UpdateMembershipSchema>;
 export const CreateUserSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email(),
-  password: z.string(),
+  password: z.string().max(50, 'Password cant be longer than 50 characters.'),
   role: z.enum(['STAFF', 'ADMIN']),
 });
 
@@ -58,3 +58,10 @@ export const UpdateUserSchema = z.object({
 });
 
 export type UpdateUserBody = z.infer<typeof UpdateUserSchema>;
+
+export const LoginUserSchema = z.object({
+  email: z.string().email(),
+  password: z.string().max(50, 'Password cant be longer than 50 characters.'),
+});
+
+export type LoginUserBody = z.infer<typeof LoginUserSchema>;

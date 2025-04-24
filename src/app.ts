@@ -1,18 +1,49 @@
 import express, { NextFunction, Request, Response } from 'express';
 import createHttpError, { isHttpError } from 'http-errors';
 import cors from 'cors';
+import authRoutes from './routes/auth.routes';
 import usersRoutes from './routes/users.routes';
 import membersRoutes from './routes/members.routes';
 import membershipsRoutes from './routes/memberships.routes';
+import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
+import { requireAdmin, requireAuth } from './middlewares/auth';
+
+const SESSION_SECRET = process.env.SESSION_SECRET;
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/users', usersRoutes);
-app.use('/api/members', membersRoutes);
-app.use('/api/memberships', membershipsRoutes);
+// Initialize store with session
+const PgSessionStore = connectPgSimple(session);
+
+app.use(
+  session({
+    store: new PgSessionStore({
+      conObject: {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
+      createTableIfMissing: true,
+    }),
+    secret: SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 6000 * 60 * 8 /* 6000 * 60 = 1h => 6000 * 60 * 8 = 8h */,
+    },
+    rolling: true,
+  })
+);
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', requireAuth, requireAdmin, usersRoutes);
+app.use('/api/members', requireAuth, membersRoutes);
+app.use('/api/memberships', requireAuth, membershipsRoutes);
 
 app.use((req, res, next) => {
   next(createHttpError(404, 'Endpoint Not Found!'));

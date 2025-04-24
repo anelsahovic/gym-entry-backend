@@ -12,8 +12,10 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.25.1",
+    "@types/connect-pg-simple": "^7.0.3",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
+    "@types/express-session": "^1.18.1",
     "eslint": "^9.25.1",
     "globals": "^16.0.0",
     "nodemon": "^3.1.9",
@@ -26,10 +28,12 @@
     "@prisma/client": "^6.6.0",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
+    "connect-pg-simple": "^10.0.0",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-session": "^1.18.1",
     "http-errors": "^2.0.0",
     "zod": "^3.24.3"
   }
