@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import createHttpError, { isHttpError } from 'http-errors';
 import cors from 'cors';
 import membersRoutes from './routes/members.routes';
+import membershipsRoutes from './routes/memberships.routes';
 
 const app = express();
 
@@ -9,6 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/members', membersRoutes);
+app.use('/api/memberships', membershipsRoutes);
 
 app.use((req, res, next) => {
   next(createHttpError(404, 'Endpoint Not Found!'));

@@ -25,3 +25,19 @@ export const UpdateMemberSchema = z.object({
 });
 
 export type UpdateMemberBody = z.infer<typeof UpdateMemberSchema>;
+
+export const CreateMembershipSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  durationDays: z.number().min(1, 'Duration of the membership is required'),
+  price: z.number(),
+});
+
+export type CreateMembershipBody = z.infer<typeof CreateMembershipSchema>;
+
+export const UpdateMembershipSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  durationDays: z.number().min(1, 'Duration of the membership is required'),
+  price: z.number(),
+});
+
+export type UpdateMembershipBody = z.infer<typeof UpdateMembershipSchema>;

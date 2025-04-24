@@ -21,3 +21,15 @@ export interface ExtendMembershipBody {
 export interface DeleteMemberParams {
   memberId: string;
 }
+
+export interface ShowMembershipParams {
+  membershipId: string;
+}
+
+export interface UpdateMembershipParams {
+  membershipId: string;
+}
+
+export interface DeleteMembershipParams {
+  membershipId: string;
+}
