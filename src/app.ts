@@ -13,7 +13,12 @@ const SESSION_SECRET = process.env.SESSION_SECRET;
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Initialize store with session
@@ -35,6 +40,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 6000 * 60 * 8 /* 6000 * 60 = 1h => 6000 * 60 * 8 = 8h */,
+      sameSite: 'lax',
+      secure: false,
     },
     rolling: true,
   })

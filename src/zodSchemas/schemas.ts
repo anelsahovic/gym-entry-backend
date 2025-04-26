@@ -61,7 +61,10 @@ export type UpdateUserBody = z.infer<typeof UpdateUserSchema>;
 
 export const LoginUserSchema = z.object({
   email: z.string().email(),
-  password: z.string().max(50, 'Password cant be longer than 50 characters.'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(50, 'Password cant be longer than 50 characters.'),
 });
 
 export type LoginUserBody = z.infer<typeof LoginUserSchema>;

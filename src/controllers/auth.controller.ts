@@ -7,7 +7,12 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
   try {
     const user = await getUserFromDb(req.session.userId!);
 
-    res.status(200).json(user);
+    res.status(200).json({
+      userId: user?.id,
+      email: user?.email,
+      name: user?.name,
+      role: user?.role,
+    });
   } catch (error) {
     console.error(error);
     next(error);
