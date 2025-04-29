@@ -6,12 +6,37 @@ import { addDays, isBefore } from 'date-fns';
 const prisma = new PrismaClient();
 
 export async function getMembers() {
-  return await prisma.member.findMany();
+  return await prisma.member.findMany({
+    include: {
+      membership: {
+        select: {
+          name: true,
+        },
+      },
+      createdBy: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
 }
 
 export async function getMemberById(id: string) {
   return await prisma.member.findUnique({
     where: { id },
+    include: {
+      membership: {
+        select: {
+          name: true,
+        },
+      },
+      createdBy: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 }
 
