@@ -73,19 +73,34 @@ export async function createMember(memberData: CreateMemberBody) {
   const startDate = memberData.startDate
     ? new Date(memberData.startDate)
     : new Date();
-  const endDate = addDays(startDate, membership.durationDays);
-
+  const endDate = memberData.endDate
+    ? new Date(memberData.endDate)
+    : addDays(startDate, membership.durationDays);
+  const dateOfBirth =
+    memberData.dateOfBirth && new Date(memberData.dateOfBirth);
   return await prisma.member.create({
     data: {
       name: memberData.name,
       email: memberData.email,
       phone: memberData.phone,
-      dateOfBirth: memberData.dateOfBirth,
+      dateOfBirth: dateOfBirth,
       uniqueId: memberData.uniqueId,
       startDate: startDate,
       endDate: endDate,
       membershipId: memberData.membershipId,
       staffId: memberData.staffId,
+    },
+    include: {
+      membership: {
+        select: {
+          name: true,
+        },
+      },
+      createdBy: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 }
@@ -112,6 +127,18 @@ export async function updateMember(
       phone: newMemberData.phone,
       uniqueId: newMemberData.uniqueId,
       dateOfBirth: newMemberData.dateOfBirth,
+    },
+    include: {
+      membership: {
+        select: {
+          name: true,
+        },
+      },
+      createdBy: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 }

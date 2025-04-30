@@ -4,11 +4,12 @@ export const CreateMemberSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email().optional(),
   phone: z.string().optional(),
-  dateOfBirth: z.string().datetime().optional(),
+  dateOfBirth: z.string().optional(),
 
   uniqueId: z.string().min(1, 'Unique ID is required'),
 
-  startDate: z.string().datetime().optional(),
+  startDate: z.string().date().optional(),
+  endDate: z.string().date().optional(),
 
   membershipId: z.string().uuid('Invalid membership ID'),
   staffId: z.string().uuid('Invalid staff ID'),
