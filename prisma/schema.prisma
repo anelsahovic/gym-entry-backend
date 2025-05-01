@@ -19,16 +19,16 @@ model User {
 }
 
 model Member {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   email       String?
   phone       String?
-  dateOfBirth DateTime?
-  uniqueId    String    @unique // This is like their card ID / bar code
-  startDate   DateTime  @default(now())
+  dateOfBirth String?
+  uniqueId    String   @unique // This is like their card ID / bar code
+  startDate   DateTime @default(now())
   endDate     DateTime
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   membershipId String
   membership   Membership @relation(fields: [membershipId], references: [id])

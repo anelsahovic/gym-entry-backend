@@ -76,14 +76,13 @@ export async function createMember(memberData: CreateMemberBody) {
   const endDate = memberData.endDate
     ? new Date(memberData.endDate)
     : addDays(startDate, membership.durationDays);
-  const dateOfBirth =
-    memberData.dateOfBirth && new Date(memberData.dateOfBirth);
+
   return await prisma.member.create({
     data: {
       name: memberData.name,
       email: memberData.email,
       phone: memberData.phone,
-      dateOfBirth: dateOfBirth,
+      dateOfBirth: memberData.dateOfBirth,
       uniqueId: memberData.uniqueId,
       startDate: startDate,
       endDate: endDate,
@@ -116,6 +115,30 @@ export async function updateMember(
   });
 
   if (!member) throw createHttpError(404, 'Member not found.');
+
+  const uniqueIdTaken = await prisma.member.findFirst({
+    where: {
+      uniqueId: newMemberData.uniqueId,
+      id: {
+        not: memberId,
+      },
+    },
+  });
+
+  if (uniqueIdTaken)
+    throw createHttpError(409, 'A member with this Unique ID already exists.');
+
+  const emailTaken = await prisma.member.findFirst({
+    where: {
+      email: newMemberData.email,
+      id: {
+        not: memberId,
+      },
+    },
+  });
+
+  if (emailTaken)
+    throw createHttpError(409, 'A member with this email already exists.');
 
   return prisma.member.update({
     where: {
