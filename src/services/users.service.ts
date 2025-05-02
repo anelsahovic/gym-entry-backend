@@ -6,7 +6,11 @@ import { CreateUserBody, UpdateUserBody } from '../zodSchemas/schemas';
 const prisma = new PrismaClient();
 
 export async function getUsers() {
-  return prisma.user.findMany();
+  return prisma.user.findMany({
+    omit: {
+      password: true,
+    },
+  });
 }
 
 export async function getUserById(userId: string) {
