@@ -1,24 +1,62 @@
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import * as UsersController from '../controllers/users.controller';
 import { validateRequest } from '../middlewares/validateRequest';
-import { CreateUserSchema, UpdateUserSchema } from '../zodSchemas/schemas';
+import {
+  CreateUserSchema,
+  ResetUserPasswordSchema,
+  UpdateUserPasswordSchema,
+  UpdateUserSchema,
+} from '../zodSchemas/schemas';
+import { requireAdmin } from '../middlewares/auth';
+import {
+  DeleteUserParams,
+  ResetUserPasswordParams,
+  ShowUserParams,
+  UpdateUserParams,
+} from '../types/index.types';
 
 const router = express.Router();
 
-router.get('/', UsersController.index);
+router.get('/', requireAdmin, UsersController.index);
 
-router.get('/:userId', UsersController.show);
+router.get(
+  '/:userId',
+  requireAdmin as unknown as RequestHandler<ShowUserParams>,
+  UsersController.show
+);
 
-router.post('/', validateRequest(CreateUserSchema), UsersController.store);
+router.post(
+  '/',
+  requireAdmin,
+  validateRequest(CreateUserSchema),
+  UsersController.store
+);
 
 router.put(
   '/:userId',
+  requireAdmin as unknown as RequestHandler<UpdateUserParams>,
+
   validateRequest(UpdateUserSchema),
   UsersController.update
 );
 
-router.patch('/:userId/password', UsersController.updatePassword);
+router.patch(
+  '/:userId/update-password',
+  validateRequest(UpdateUserPasswordSchema),
+  UsersController.updatePassword
+);
 
-router.delete('/:userId', UsersController.destroy);
+router.patch(
+  '/:userId/reset-password',
+  requireAdmin as unknown as RequestHandler<ResetUserPasswordParams>,
+  validateRequest(ResetUserPasswordSchema),
+  UsersController.resetPassword
+);
+
+router.delete(
+  '/:userId',
+  requireAdmin as unknown as RequestHandler<DeleteUserParams>,
+  UsersController.destroy
+);
 
 export default router;

@@ -49,8 +49,6 @@ export interface DeleteUserParams {
 export interface UpdateUserPasswordParams {
   userId: string;
 }
-
-export interface UpdateUserPasswordBody {
-  oldPassword: string;
-  newPassword: string;
+export interface ResetUserPasswordParams {
+  userId: string;
 }

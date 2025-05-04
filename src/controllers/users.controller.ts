@@ -5,17 +5,23 @@ import {
   deleteUser,
   getUserById,
   getUsers,
+  resetUserPassword,
   updateUser,
   updateUserPassword,
 } from '../services/users.service';
 import {
   DeleteUserParams,
+  ResetUserPasswordParams,
   ShowUserParams,
   UpdateUserParams,
-  UpdateUserPasswordBody,
   UpdateUserPasswordParams,
 } from '../types/index.types';
-import { CreateUserBody, UpdateUserBody } from '../zodSchemas/schemas';
+import {
+  CreateUserBody,
+  ResetUserPasswordBody,
+  UpdateUserBody,
+  UpdateUserPasswordBody,
+} from '../zodSchemas/schemas';
 
 export const index: RequestHandler = async (req, res, next) => {
   try {
@@ -58,9 +64,9 @@ export const store: RequestHandler<
   CreateUserBody,
   unknown
 > = async (req, res, next) => {
-  const { name, email, role, password } = req.body;
+  const { name, username, email, role, password } = req.body;
   try {
-    const userData = { name, email, role, password };
+    const userData = { name, username, email, role, password };
 
     const user = await createUser(userData);
 
@@ -78,12 +84,12 @@ export const update: RequestHandler<
   unknown
 > = async (req, res, next) => {
   const { userId } = req.params;
-  const { name, email, role } = req.body;
+  const { name, username, email, role } = req.body;
 
   try {
     if (!userId) throw createHttpError(400, 'Please provide user ID.');
 
-    const updatedUserData = { name, email, role };
+    const updatedUserData = { name, username, email, role };
 
     const updatedUser = await updateUser(userId, updatedUserData);
 
@@ -106,14 +112,32 @@ export const updatePassword: RequestHandler<
   try {
     if (!userId) throw createHttpError(400, 'Please provide user ID.');
 
-    if (!oldPassword) throw createHttpError(400, 'Old password required.');
-    if (!newPassword) throw createHttpError(400, 'New password required.');
-
     const updatedUser = await updateUserPassword(
       userId,
       oldPassword,
       newPassword
     );
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const resetPassword: RequestHandler<
+  ResetUserPasswordParams,
+  unknown,
+  ResetUserPasswordBody,
+  unknown
+> = async (req, res, next) => {
+  const { userId } = req.params;
+  const { password } = req.body;
+
+  try {
+    if (!userId) throw createHttpError(400, 'Please provide user ID.');
+
+    const updatedUser = await resetUserPassword(userId, password);
 
     res.status(200).json(updatedUser);
   } catch (error) {

@@ -19,12 +19,12 @@ export async function getUserFromDb(authUserId: string) {
 export async function loginUser(loginData: LoginUserBody) {
   const fetchedUser = await prisma.user.findUnique({
     where: {
-      email: loginData.email,
+      username: loginData.username,
     },
   });
 
   if (!fetchedUser)
-    throw createHttpError(404, "User with that email doesn't exist");
+    throw createHttpError(404, "User with that username doesn't exist");
 
   const passwordMatched = await bcrypt.compare(
     loginData.password,

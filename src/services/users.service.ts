@@ -25,6 +25,15 @@ export async function getUserById(userId: string) {
 }
 
 export async function createUser(userData: CreateUserBody) {
+  const userByUsername = await prisma.user.findUnique({
+    where: {
+      username: userData.username,
+    },
+  });
+
+  if (userByUsername)
+    throw createHttpError(409, 'User with that username already exists.');
+
   const userByEmail = await prisma.user.findUnique({
     where: {
       email: userData.email,
@@ -39,9 +48,13 @@ export async function createUser(userData: CreateUserBody) {
   return await prisma.user.create({
     data: {
       name: userData.name,
+      username: userData.username,
       email: userData.email,
       role: userData.role,
       password: hashedPassword,
+    },
+    omit: {
+      password: true,
     },
   });
 }
@@ -54,6 +67,18 @@ export async function updateUser(userId: string, newUserData: UpdateUserBody) {
   });
 
   if (!existingUser) throw createHttpError(404, "User doesn't exist.");
+
+  const userWithSameUsername = await prisma.user.findFirst({
+    where: {
+      username: newUserData.username,
+      id: {
+        not: userId,
+      },
+    },
+  });
+
+  if (userWithSameUsername)
+    throw createHttpError(409, 'User with that username already exists.');
 
   const userWithSameEmail = await prisma.user.findFirst({
     where: {
@@ -73,8 +98,12 @@ export async function updateUser(userId: string, newUserData: UpdateUserBody) {
     },
     data: {
       name: newUserData.name,
+      username: newUserData.username,
       email: newUserData.email,
       role: newUserData.role,
+    },
+    omit: {
+      password: true,
     },
   });
 }
@@ -111,6 +140,38 @@ export async function updateUserPassword(
     },
     data: {
       password: newHashedPassword,
+    },
+    omit: {
+      password: true,
+    },
+  });
+}
+export async function resetUserPassword(userId: string, password: string) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) throw createHttpError(404, "User doesn't exist.");
+
+  if (await bcrypt.compare(password, user.password))
+    throw createHttpError(
+      400,
+      'New password must be different from the old password.'
+    );
+
+  const newHashedPassword = await bcrypt.hash(password, 10);
+
+  return await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      password: newHashedPassword,
+    },
+    omit: {
+      password: true,
     },
   });
 }
