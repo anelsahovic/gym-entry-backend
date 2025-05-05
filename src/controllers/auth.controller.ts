@@ -11,6 +11,7 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
       userId: user?.id,
       email: user?.email,
       name: user?.name,
+      username: user?.username,
       role: user?.role,
     });
   } catch (error) {
@@ -25,10 +26,10 @@ export const login: RequestHandler<
   LoginUserBody,
   unknown
 > = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
-    const loggedInUser = await loginUser({ email, password });
+    const loggedInUser = await loginUser({ username, password });
 
     if (!loggedInUser) throw createHttpError(404, 'User not found.');
 

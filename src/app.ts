@@ -7,7 +7,7 @@ import membersRoutes from './routes/members.routes';
 import membershipsRoutes from './routes/memberships.routes';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
-import { requireAdmin, requireAuth } from './middlewares/auth';
+import { requireAuth } from './middlewares/auth';
 
 const SESSION_SECRET = process.env.SESSION_SECRET;
 
@@ -48,7 +48,7 @@ app.use(
 );
 
 app.use('/api/auth', authRoutes);
-app.use('/api/users', requireAuth, requireAdmin, usersRoutes);
+app.use('/api/users', requireAuth, usersRoutes);
 app.use('/api/members', requireAuth, membersRoutes);
 app.use('/api/memberships', requireAuth, membershipsRoutes);
 

@@ -11,7 +11,6 @@ import { requireAdmin } from '../middlewares/auth';
 import {
   DeleteUserParams,
   ResetUserPasswordParams,
-  ShowUserParams,
   UpdateUserParams,
 } from '../types/index.types';
 
@@ -19,11 +18,7 @@ const router = express.Router();
 
 router.get('/', requireAdmin, UsersController.index);
 
-router.get(
-  '/:userId',
-  requireAdmin as unknown as RequestHandler<ShowUserParams>,
-  UsersController.show
-);
+router.get('/:userId', UsersController.show);
 
 router.post(
   '/',
