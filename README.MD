@@ -15,6 +15,21 @@ A Node.js, Express, and TypeScript-based backend application for managing a gym 
 
 ---
 
+### 🔐 Dummy Test User Credentials
+
+After seeding the database, the following test users are created:
+
+- **Admin User**
+
+  - **Username:** `admin`
+  - **Password:** `password`
+
+- **Staff User**
+  - **Username:** `staff`
+  - **Password:** `password`
+
+> 💡 These credentials are for testing purposes only. Make sure to change them in production environments.
+
 ## 🛠️ Tech Stack
 
 - **Runtime:** Node.js
@@ -57,7 +72,7 @@ SESSION_SECRET=your_secret_session_key
 
 ```
 
-### 4. Run Prisma migrations (if needed)
+### 4. Run Prisma migrations
 
 ```bash
 npx prisma generate
@@ -65,7 +80,14 @@ npx prisma migrate dev --name init
 
 ```
 
-### 5. Start the server
+### 5. Run Prisma seed to populate database
+
+```bash
+npm run seed
+
+```
+
+### 6. Start the server
 
 ```bash
 npm start
@@ -86,14 +108,15 @@ npm start
 
 ### 👤 User Routes (`/api/users`) – _Admin Only_
 
-| Method | Endpoint            | Description          | Access |
-| ------ | ------------------- | -------------------- | ------ |
-| GET    | `/`                 | Get all users        | Admin  |
-| GET    | `/:userId`          | Get single user      | Admin  |
-| POST   | `/`                 | Create user          | Admin  |
-| PUT    | `/:userId`          | Update user          | Admin  |
-| PATCH  | `/:userId/password` | Update user password | Admin  |
-| DELETE | `/:userId`          | Delete user          | Admin  |
+| Method | Endpoint                   | Description          | Access      |
+| ------ | -------------------------- | -------------------- | ----------- |
+| GET    | `/`                        | Get all users        | Admin       |
+| GET    | `/:userId`                 | Get single user      | Admin       |
+| POST   | `/`                        | Create user          | Admin       |
+| PUT    | `/:userId`                 | Update user          | Admin       |
+| PATCH  | `/:userId/update-password` | Update user password | Staff/Admin |
+| PATCH  | `/:userId/reset-password`  | Reset user password  | Admin       |
+| DELETE | `/:userId`                 | Delete user          | Admin       |
 
 ---
 
