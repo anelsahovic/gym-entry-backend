@@ -15,7 +15,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: [
+      'http://localhost:5173',
+      'https://anelsahovic-gym-entry.vercel.app',
+    ],
     credentials: true,
   })
 );
@@ -40,8 +43,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 6000 * 60 * 8 /* 6000 * 60 = 1h => 6000 * 60 * 8 = 8h */,
-      sameSite: 'lax',
-      secure: false,
+      sameSite: 'none',
+      secure: true,
     },
     rolling: true,
   })
