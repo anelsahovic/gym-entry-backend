@@ -34,7 +34,7 @@ export const login: RequestHandler<
     if (!loggedInUser) throw createHttpError(404, 'User not found.');
 
     req.session.userId = loggedInUser.id;
-
+    req.session.save();
     res.status(200).json(loggedInUser);
   } catch (error) {
     console.error(error);

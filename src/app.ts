@@ -24,6 +24,8 @@ app.use(express.json());
 // Initialize store with session
 const PgSessionStore = connectPgSimple(session);
 
+app.set('trust proxy', 1);
+
 app.use(
   session({
     store: new PgSessionStore({
