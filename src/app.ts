@@ -15,10 +15,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [
-      'http://localhost:5173',
-      'https://anelsahovic-gym-entry.vercel.app',
-    ],
+    origin: 'https://anelsahovic-gym-entry.vercel.app',
     credentials: true,
   })
 );
@@ -45,6 +42,7 @@ app.use(
       maxAge: 6000 * 60 * 8 /* 6000 * 60 = 1h => 6000 * 60 * 8 = 8h */,
       sameSite: 'none',
       secure: true,
+      path: '/',
     },
     rolling: true,
   })
