@@ -1,14 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { addDays, subDays } from 'date-fns';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  const today = new Date();
+
   // Create hashed passwords
   const adminPassword = await bcrypt.hash('password', 10);
   const staffPassword = await bcrypt.hash('password', 10);
 
-  // Create admin
+  // Create admin user
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const admin = await prisma.user.create({
     data: {
@@ -20,7 +23,7 @@ async function main() {
     },
   });
 
-  // Create staff
+  // Create staff user
   const staff = await prisma.user.create({
     data: {
       name: 'Staff User',
@@ -32,8 +35,7 @@ async function main() {
   });
 
   // Create memberships
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const memberships = await prisma.membership.createMany({
+  await prisma.membership.createMany({
     data: [
       { name: 'Daily', durationDays: 1, price: 5 },
       { name: 'Monthly', durationDays: 30, price: 30 },
@@ -42,36 +44,47 @@ async function main() {
     ],
   });
 
-  // Get created memberships
+  // Fetch all memberships
   const allMemberships = await prisma.membership.findMany();
 
-  // Create some members
-  const memberPromises = allMemberships.map((membership, i) =>
-    prisma.member.create({
-      data: {
-        name: `Member ${i + 1}`,
-        email: `member${i + 1}@example.com`,
-        phone: '1234567890',
-        dateOfBirth: '1990-01-01',
-        uniqueId: `CARD${i + 1}`,
-        startDate: new Date(),
-        endDate: new Date(
-          Date.now() + membership.durationDays * 24 * 60 * 60 * 1000
-        ),
-        membershipId: membership.id,
-        staffId: staff.id,
-      },
-    })
+  // Create 50 members with mixed active/expired status
+  const memberCount = 50;
+
+  const memberData = Array.from({ length: memberCount }, (_, i) => {
+    const membership = allMemberships[i % allMemberships.length];
+
+    // Random start date up to 365 days ago
+    const daysAgo = Math.floor(Math.random() * 365);
+    const startDate = subDays(today, daysAgo);
+    const endDate = addDays(startDate, membership.durationDays);
+
+    return {
+      name: `Member ${i + 1}`,
+      email: `member${i + 1}@example.com`,
+      phone: '1234567890',
+      dateOfBirth: '1990-01-01',
+      uniqueId: `CARD${i + 1}`,
+      startDate,
+      endDate,
+      membershipId: membership.id,
+      staffId: staff.id,
+    };
+  });
+
+  await prisma.member.createMany({ data: memberData });
+
+  // Debug summary
+  const expiredCount = memberData.filter((m) => m.endDate < today).length;
+  console.log(
+    `✅ Seeded ${memberCount} members (${expiredCount} expired, ${
+      memberCount - expiredCount
+    } active).`
   );
-
-  await Promise.all(memberPromises);
-
-  console.log('Seeding complete!');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('❌ Seeding failed:', e);
     process.exit(1);
   })
   .finally(async () => {
