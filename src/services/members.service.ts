@@ -43,6 +43,18 @@ export async function getMemberById(id: string) {
 export async function getMemberByUniqueId(uniqueId: string) {
   return await prisma.member.findUnique({
     where: { uniqueId },
+    include: {
+      membership: {
+        select: {
+          name: true,
+        },
+      },
+      createdBy: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 }
 
@@ -204,6 +216,18 @@ export async function extendMembership(memberId: string, membershipId: string) {
       membershipId,
       startDate: startDate,
       endDate: endDate,
+    },
+    include: {
+      membership: {
+        select: {
+          name: true,
+        },
+      },
+      createdBy: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 }
