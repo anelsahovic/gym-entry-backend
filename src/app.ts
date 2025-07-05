@@ -15,7 +15,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'https://anelsahovic-gym-entry.vercel.app',
+    origin: [
+      'http://localhost:5173',
+      'https://anelsahovic-gym-entry.vercel.app',
+    ],
     credentials: true,
   })
 );
